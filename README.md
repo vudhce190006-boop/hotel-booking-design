@@ -17,21 +17,22 @@ sequenceDiagram
 
         LoginServlet ->> AccountDAO: Check email exists
         AccountDAO ->> DBContext: Execute query
-        DBContext ->> Database: Query email
-        Database -->> DBContext: Result
-        DBContext -->> AccountDAO: Result
+        DBContext ->> Database: Query customer by email
+        Database -->> DBContext: Result set
+        DBContext -->> AccountDAO: Result set
         AccountDAO -->> LoginServlet: Email status
 
         alt Email exists
             LoginServlet ->> AccountDAO: Get customer
-            AccountDAO ->> DBContext: Query customer
-            DBContext ->> Database
-            Database -->> DBContext
-            DBContext -->> AccountDAO
+            AccountDAO ->> DBContext: Execute query
+            DBContext ->> Database: Get customer
+            Database -->> DBContext: Customer data
+            DBContext -->> AccountDAO: Result
             AccountDAO -->> LoginServlet: Customer
 
             alt Password incorrect
                 LoginServlet ->> LoginView: Incorrect password
+                LoginView ->> Customer: Show error
             else Password correct
                 alt Account blocked
                     LoginView ->> Customer: Account is blocked
